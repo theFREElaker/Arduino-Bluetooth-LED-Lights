@@ -57,31 +57,6 @@ void loop() {
   if(Serial.available()){
     readData(); 
   }
-  /*
-  uint8_t numBytesAvailable = messageReceived();
-  
-  if((numBytesAvailable >= MIN_MESSAGE_LENGTH) && (Serial.peek() == END_MESSAGE_CODE_BYTE_2)){
-    
-    // the actual data will always be at least 5 bytes shorter than the transmitted
-    //  message (See Message Format in ComsStation.h). But becuase we are adding
-    //  the valid data counter at the beginning of the data array we need to add 1
-    //  to its length
-    uint8_t dataLen = numBytesAvailable - NUM_TRANSMISSION_INFO_BYTES + 1;
-    uint8_t receivedMessage[numBytesAvailable], data[numBytesAvailable+1];
-    
-    readData(receivedMessage, numBytesAvailable);
-    errorType error = comSatOnline.decode(receivedMessage, numBytesAvailable, data, dataLen);
-    
-    if (error == messageGoodToBeDecoded) {
-      //lightsOn.update(data, dataLen);
-    } else {
-      // Refer to ComsStation.h for message error codes
-      Serial.print("Message ERROR Code: ");
-      Serial.println(error);
-    }
-  }*/
-  
-  
 }
 
 void readData(){
@@ -166,23 +141,6 @@ void readData(){
   }
 }
 
-/*
-uint8_t messageReceived(){
-  if (Serial.available() > MIN_MESSAGE_LENGTH){
-    return Serial.available();
-  } else {
-    return 0;
-  }
-}
-
-void readData(uint8_t message[], uint8_t numBytesAvailable){
-  uint8_t i;
-  for (i = 0; i < numBytesAvailable; i++){
-    message[i] = Serial.read();
-    Serial.println(message[i]);
-  }
-}
-*/
 void clearBuffer(){
   numElementsInBuffer = 0;
   messageStartCodeReceived = -2;
