@@ -55,7 +55,7 @@ void setup() {
 
 void loop() {
   if(Serial.available()){
-    readData(); 
+    readData();
   }
 }
 
@@ -82,7 +82,7 @@ void readData(){
         // look for START_MESSAGE_CODE_BYTE_2
         
         if (readByte == START_MESSAGE_CODE_BYTE_2) {
-          if (addToBuffer(readByte) {
+          if (addToBuffer(readByte)) {
             messageStartCodeReceived = numElementsInBuffer - 1;
           } else {
             Serial.print("CASE -1: Well shoot, this shouldn't happen. The buffer is full...\n");
@@ -109,12 +109,18 @@ void readData(){
                 } else {
                   Serial.print("DEFAULT: Well shoot, this shouldn't happen. The buffer is full...\n");
                 }
+              } else {
+
+                // Actually Adding the message data to the buffer
+                if (!addToBuffer(readByte)) {
+                  Serial.print("DEFAULT: Well shoot, this shouldn't happen. The buffer is full...\n");
+                }
               }
               break;
 
-   // Double check this. It seems that maybe removing the stuffed bytes right here
-   //  is the best option. If this is taken inside of ComsStation.h this could be handled
-   //  more elegantly. BUT that will compromise the low coupling of the ComsStation library
+             // Double check this. It seems that maybe removing the stuffed bytes right here
+             //  is the best option. If this is taken inside of ComsStation.h this could be handled
+             //  more elegantly. BUT that will compromise the low coupling of the ComsStation library
             case -1:
               // Looking for END_MESSAGE_CODE_BYTE_2
 
@@ -122,11 +128,13 @@ void readData(){
                 if (addToBuffer(readByte)) {
                   // reached end of message
                   messageEndCodeReceived = numElementsInBuffer - 1;
-                  // @TODO send message to comsStation
+                  
+                  // Send buffer to Comsstation
+                  
                 } else {
                   Serial.print("DEFAULT: Well shoot, this shouldn't happen. The buffer is full...\n");
                 }
-              } else if (readByte == END_MESSAGECODE_BYTE_1) {
+              } else if (readByte == END_MESSAGE_CODE_BYTE_1) {
                 // Stuffed byte, not message termination
                 messageEndCodeReceived = -2;
               } else {
@@ -136,6 +144,7 @@ void readData(){
               break;
 
             default:
+              break;
           }
     }
   }
@@ -159,6 +168,7 @@ bool addToBuffer(uint8_t element){
     // Room in the buffer so add it
     bufferArray[numElementsInBuffer] = element;
     numElementsInBuffer += 1;
+    
     return true;
   }
 }
